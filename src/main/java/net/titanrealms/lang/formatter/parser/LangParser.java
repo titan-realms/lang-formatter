@@ -2,8 +2,9 @@ package net.titanrealms.lang.formatter.parser;
 
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
-import net.kyori.adventure.text.serializer.plain.PlainComponentSerializer;
+import net.titanrealms.lang.formatter.strings.segment.ColoredSegment;
 import net.titanrealms.lang.formatter.strings.segment.LangSegment;
+import net.titanrealms.lang.formatter.strings.segment.LangSegmentTextModifier;
 import net.titanrealms.lang.formatter.strings.segment.TextSegment;
 import org.jetbrains.annotations.NotNull;
 
@@ -13,12 +14,22 @@ import java.util.List;
 public class LangParser {
 
     public static void main(String[] args) {
-        List<LangSegment> segments = LangParser.createSegments("{#FFFFFF}f");
+        List<LangSegment> segments = LangParser.createSegments("{#0000}{!bold}get your free ice cream{\"ice-cream-limit\">1(s)()} today");
         TextComponent.Builder componentBuilder = Component.text();
-        segments.forEach(segment -> segment.apply(componentBuilder, null));
-
+        for (int i = 0; i < segments.size(); i++) {
+            LangSegment segment = segments.get(i);
+            if (segment instanceof TextSegment) {
+                for (int j = i - 1; j >= 0; j--) {
+                    LangSegment previousSegment = segments.get(j);
+                    if (previousSegment instanceof LangSegmentTextModifier) {
+                        LangSegmentTextModifier textModifier = (LangSegmentTextModifier) previousSegment;
+                        textModifier.modify(((TextSegment) segment));
+                    }
+                }
+                segment.apply(componentBuilder, null);
+            }
+        }
         System.out.println("Children: " + componentBuilder.build().children());
-        System.out.println("Content: " + PlainComponentSerializer.plain().serialize(componentBuilder.build()));
     }
 
     /**
@@ -33,7 +44,7 @@ public class LangParser {
             char openCharacter = line.charAt(i);
             if (openCharacter == '{') {
                 if (i > lastClosingIndex) {
-                    segments.add(new TextSegment(line.substring(lastClosingIndex, i)));
+                    segments.add(new TextSegment(line.substring(lastClosingIndex + 1, i)));
                 }
                 for (int j = i + 1; j < length; j++) {
                     char closingCharacter = line.charAt(j);
@@ -41,14 +52,13 @@ public class LangParser {
                         segments.add(parseSegment(line.substring(i + 1, j))); // Only include what's contained within the { }
                         lastClosingIndex = j;
                         i = j; // No need to check if anything in between is {
+                        break;
                     }
                 }
             }
         }
-        System.out.println(lastClosingIndex);
-        System.out.println(length);
         if (lastClosingIndex < length) {
-            segments.add(new TextSegment(line.substring(lastClosingIndex)));
+            segments.add(new TextSegment(line.substring(lastClosingIndex + 1)));
         }
         return segments;
     }
@@ -58,12 +68,12 @@ public class LangParser {
      */
     @NotNull
     private static LangSegment parseSegment(@NotNull String segment) {
-        System.out.println("SEGMENT START " + segment);
         char indicator = segment.charAt(0);
         switch (indicator) {
             case '#':
-                return
+                return new ColoredSegment(segment);
+            default:
+                return null;
         }
-        return null;
     }
 }
