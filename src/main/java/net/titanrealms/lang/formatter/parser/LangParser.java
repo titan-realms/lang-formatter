@@ -17,18 +17,30 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 
 public class LangParser {
 
     public static void main(String[] args) {
         List<LangSegment> segments = LangParser.createSegments("{#00000}{!bold}get your {#ffffff}{@ice-cream-limit} {#00000}free ice cream{\"ice-cream-limit\">1(s)()} today");
-        TextComponent.Builder componentBuilder = Component.text();
-        segments.forEach((segment) -> segment.apply(componentBuilder, new HashMap<>() {{
+        TextComponent text = segmentsToText(segments, new HashMap<>() {{
             this.put("ice-cream-limit", 5);
-        }}));
-        System.out.println("Children: " + componentBuilder.build().children());
-        System.out.println("Plain: " + PlainComponentSerializer.plain().serialize(componentBuilder.build()));
+        }});
+        System.out.println("Children: " + text.children());
+        System.out.println("Plain: " + PlainComponentSerializer.plain().serialize(text));
+    }
+
+    public static TextComponent segmentsToText(@NotNull Collection<LangSegment> segments) {
+        return segmentsToText(segments);
+    }
+
+    public static TextComponent segmentsToText(@NotNull Collection<LangSegment> segments, @Nullable Map<String, Object> placeholders) {
+        TextComponent.Builder textBuilder = Component.text();
+        for (LangSegment segment : segments) {
+            segment.apply(textBuilder, placeholders);
+        }
+        return textBuilder.build();
     }
 
     @NotNull
