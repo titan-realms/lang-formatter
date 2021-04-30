@@ -3,6 +3,8 @@ package net.titanrealms.lang.formatter.parser;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.serializer.plain.PlainComponentSerializer;
+import net.titanrealms.lang.formatter.strings.placeholders.Placeholders;
+import net.titanrealms.lang.formatter.strings.placeholders.PlaceholdersConsumer;
 import net.titanrealms.lang.formatter.strings.segment.LangSegment;
 import net.titanrealms.lang.formatter.strings.segment.modifiers.TextModifier;
 import net.titanrealms.lang.formatter.strings.segment.modifiers.text.ColorModifier;
@@ -15,7 +17,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -24,15 +25,21 @@ public class LangParser {
 
     public static void main(String[] args) {
         List<LangSegment> segments = LangParser.createSegments("{#00000}{!bold}get your {#ffffff}{@ice-cream-limit} {#00000}free ice cream{\"ice-cream-limit\">1(s)()} today");
-        TextComponent text = segmentsToText(segments, new HashMap<>() {{
-            this.put("ice-cream-limit", 5);
-        }});
+        TextComponent text = segmentsToText(segments, (placeholders) -> placeholders
+                .set("ice-cream-limit", 5)
+        );
         System.out.println("Children: " + text.children());
         System.out.println("Plain: " + PlainComponentSerializer.plain().serialize(text));
     }
 
     public static TextComponent segmentsToText(@NotNull Collection<LangSegment> segments) {
         return segmentsToText(segments);
+    }
+
+    public static TextComponent segmentsToText(@NotNull Collection<LangSegment> segments, PlaceholdersConsumer placeholdersConsumer) {
+        Placeholders placeholders = new Placeholders();
+        placeholdersConsumer.accept(placeholders);
+        return segmentsToText(segments, placeholders.toMap());
     }
 
     public static TextComponent segmentsToText(@NotNull Collection<LangSegment> segments, @Nullable Map<String, Object> placeholders) {
