@@ -33,7 +33,7 @@ public class LangParser {
     }
 
     public static TextComponent segmentsToText(@NotNull Collection<LangSegment> segments) {
-        return segmentsToText(segments);
+        return segmentsToText(segments, (Map<String, Object>) null);
     }
 
     public static TextComponent segmentsToText(@NotNull Collection<LangSegment> segments, PlaceholdersConsumer placeholdersConsumer) {
