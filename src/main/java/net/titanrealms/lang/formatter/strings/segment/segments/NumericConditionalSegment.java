@@ -90,4 +90,15 @@ public class NumericConditionalSegment extends ModifiableLangSegment {
             return false;
         }
     }
+
+    @Override
+    public String toString() {
+        return "NumericConditionalSegment{" +
+                "variable='" + variable + '\'' +
+                ", operator=" + operator +
+                ", conditionalValue=" + conditionalValue +
+                ", trueExtension='" + trueExtension + '\'' +
+                ", falseExtension='" + falseExtension + '\'' +
+                '}';
+    }
 }

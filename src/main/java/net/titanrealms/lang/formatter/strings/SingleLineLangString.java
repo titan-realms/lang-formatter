@@ -20,4 +20,11 @@ public class SingleLineLangString extends LangString {
     public Component toComponent() {
         return null;
     }
+
+    @Override
+    public String toString() {
+        return "SingleLineLangString{" +
+                "segments=" + segments +
+                '}';
+    }
 }

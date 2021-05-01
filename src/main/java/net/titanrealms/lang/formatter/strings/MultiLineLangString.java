@@ -23,4 +23,11 @@ public class MultiLineLangString extends LangString {
     public Component toComponent() {
         return null;
     }
+
+    @Override
+    public String toString() {
+        return "MultiLineLangString{" +
+                "segments=" + segments +
+                '}';
+    }
 }

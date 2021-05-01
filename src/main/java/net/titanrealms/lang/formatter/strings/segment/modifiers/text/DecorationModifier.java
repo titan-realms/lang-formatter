@@ -16,4 +16,11 @@ public class DecorationModifier implements TextModifier {
     public TextComponent modify(@NotNull TextComponent text) {
         return text.decoration(this.decoration, true);
     }
+
+    @Override
+    public String toString() {
+        return "DecorationModifier{" +
+                "decoration=" + decoration +
+                '}';
+    }
 }

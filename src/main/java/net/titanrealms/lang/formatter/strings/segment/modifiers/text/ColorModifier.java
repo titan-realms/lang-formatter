@@ -19,4 +19,11 @@ public class ColorModifier implements TextModifier {
     public TextComponent modify(@NotNull TextComponent text) {
         return text.color(this.color);
     }
+
+    @Override
+    public String toString() {
+        return "ColorModifier{" +
+                "color=" + color +
+                '}';
+    }
 }

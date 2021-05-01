@@ -22,4 +22,11 @@ public class TextSegment extends ModifiableLangSegment {
     public void apply(@NotNull TextComponent.Builder builder, @Nullable Map<String, Object> placeholders) {
         builder.append(this.text);
     }
+
+    @Override
+    public String toString() {
+        return "TextSegment{" +
+                "text=" + text +
+                '}';
+    }
 }

@@ -26,4 +26,11 @@ public class VariableSegment extends ModifiableLangSegment {
         TextComponent text = Component.text(placeholders.getOrDefault(this.variable, "?").toString());
         builder.append(this.applyModifiers(text));
     }
+
+    @Override
+    public String toString() {
+        return "VariableSegment{" +
+                "variable='" + variable + '\'' +
+                '}';
+    }
 }
