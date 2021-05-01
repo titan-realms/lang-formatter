@@ -11,7 +11,7 @@ public class SingleLineLangString extends LangString {
     @NotNull
     private final List<LangSegment> segments;
 
-    protected SingleLineLangString(@NotNull String identifier, @NotNull String value) {
+    public SingleLineLangString(@NotNull String identifier, @NotNull String value) {
         super(identifier);
         this.segments = LangParser.createSegments(value);
     }
