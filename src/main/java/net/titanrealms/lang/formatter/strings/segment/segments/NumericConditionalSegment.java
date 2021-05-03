@@ -21,7 +21,7 @@ public class NumericConditionalSegment extends ModifiableLangSegment {
         super(modifiers);
         String[] args = condition.split("\"");
         this.variable = args[1];
-        this.operator = Operator.parse(args[2].substring(0, this.isNumeric(String.valueOf(args[2].charAt(1))) ? 1 : 2));
+        this.operator = Operator.parse(args[2].substring(0, this.isNumeric(String.valueOf(args[2].charAt(1))) != null ? 1 : 2));
         String[] extensions = args[2].split("\\(");
         this.conditionalValue = Integer.parseInt(extensions[0].replace(this.operator.symbol, ""));
         this.trueExtension = extensions[1].substring(0, extensions[1].length() - 1);
@@ -34,10 +34,10 @@ public class NumericConditionalSegment extends ModifiableLangSegment {
             return;
         }
         String stringValue = placeholders.getOrDefault(this.variable, "?").toString();
-        if (!this.isNumeric(stringValue)) {
-            return;
+        Integer value = this.isNumeric(stringValue);
+        if (value == null) {
+            throw new IllegalArgumentException("Non numeric value passed in as integer for numeric conditional statement: " + stringValue);
         }
-        int value = Integer.parseInt(stringValue);
         TextComponent text = Component.text(this.operator.test(value, this.conditionalValue) ? this.trueExtension : this.falseExtension);
         builder.append(this.applyModifiers(text));
     }
@@ -82,12 +82,11 @@ public class NumericConditionalSegment extends ModifiableLangSegment {
         }
     }
 
-    private boolean isNumeric(String string) {
+    private Integer isNumeric(String string) {
         try {
-            Integer.parseInt(string);
-            return true;
-        } catch (Exception ex) {
-            return false;
+            return Integer.parseInt(string);
+        } catch (NumberFormatException ex) {
+            return null;
         }
     }
 
