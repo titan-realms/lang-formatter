@@ -4,6 +4,8 @@ This is our API/library that parses our language spec from lang files into objec
 
 This library is designed to render into Adventure Componenets.
 
+NOTE: We will not provide any support for this project. Its development is completely internal and it's only open sourced as we thought others may find it useful. Only issues related to bugs will be dealt with.
+
 ## Spec
 
 `{#hex}` = hex colour code<br/>
