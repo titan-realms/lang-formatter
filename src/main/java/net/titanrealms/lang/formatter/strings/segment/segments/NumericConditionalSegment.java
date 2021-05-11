@@ -7,6 +7,7 @@ import net.titanrealms.lang.formatter.strings.segment.modifiers.TextModifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 
@@ -17,19 +18,60 @@ public class NumericConditionalSegment extends ModifiableLangSegment {
     private final String trueExtension;
     private final String falseExtension;
 
+    // gonna keep here for a while for testing
+    public static void main(String... initArgs) {
+        String input = "\"placeholder\" > 1 ? \"true text\" : \"false text\"";
+
+        Operator operator;
+        int conditionalValue;
+
+        String[] args = input.split("\"");
+        String variable = args[1];
+        String middleSection = args[2].replace(" ", "");
+        String beforeTernary = middleSection.split("\\?")[0];
+        if (Character.isDigit(middleSection.charAt(1))) {
+            operator = Operator.parse(String.valueOf(middleSection.charAt(0)));
+            conditionalValue = Integer.parseInt(beforeTernary.substring(1));
+        } else {
+            operator = Operator.parse(middleSection.substring(0, 1));
+            conditionalValue = Integer.parseInt(beforeTernary.substring(2));
+        }
+        String trueExtension = args[3];
+        String falseExtension = args[5];
+
+        System.out.println("Input: " + input);
+        System.out.println("Args: " + Arrays.toString(args));
+        System.out.println("Variable: " + variable);
+        System.out.println("Middle Section: " + middleSection);
+        System.out.println("Before Ternary: " + beforeTernary);
+        System.out.println("Operator: " + operator);
+        System.out.println("Conditional Value: " + conditionalValue);
+        System.out.println(" ");
+        System.out.println("True Extension: " + trueExtension);
+        System.out.println("False Extension: " + falseExtension);
+
+        System.out.println("Reconstructed: \"" + variable + "\" " + operator.symbol + " " + conditionalValue + " ? \"" + trueExtension + "\" : \"" + falseExtension + "\"");
+    }
+
     public NumericConditionalSegment(@NotNull String condition, @NotNull Collection<TextModifier> modifiers) {
         super(modifiers);
         String[] args = condition.split("\"");
         this.variable = args[1];
-        this.operator = Operator.parse(args[2].substring(0, this.isNumeric(String.valueOf(args[2].charAt(1))) != null ? 1 : 2));
-        String[] extensions = args[2].split("\\(");
-        this.conditionalValue = Integer.parseInt(extensions[0].replace(this.operator.symbol, ""));
-        this.trueExtension = extensions[1].substring(0, extensions[1].length() - 1);
-        this.falseExtension = extensions[2].substring(0, extensions[2].length() - 1);
+        String middleSection = args[2].replace(" ", "");
+        String beforeTernary = middleSection.split("\\?")[0];
+        if (Character.isDigit(middleSection.charAt(1))) {
+            this.operator = Operator.parse(String.valueOf(middleSection.charAt(0)));
+            this.conditionalValue = Integer.parseInt(beforeTernary.substring(1));
+        } else {
+            this.operator = Operator.parse(middleSection.substring(0, 1));
+            this.conditionalValue = Integer.parseInt(beforeTernary.substring(2));
+        }
+        this.trueExtension = args[3];
+        this.falseExtension = args[5];
     }
 
     @Override
-    public void apply(TextComponent.@NotNull Builder builder, @Nullable Map<String, Object> placeholders) {
+    public void apply(@NotNull TextComponent.Builder builder, @Nullable Map<String, Object> placeholders) {
         if (placeholders == null) {
             return;
         }
@@ -43,11 +85,11 @@ public class NumericConditionalSegment extends ModifiableLangSegment {
     }
 
     private enum Operator {
-        EQUAL("=="),
-        BIGGER(">"),
-        SMALLER("<"),
-        BIGGER_EQUAL(">="),
-        SMALLER_EQUAL("<=");
+        EQUAL_TO("=="),
+        GREATER_THAN(">"),
+        SMALLER_THAN("<"),
+        GREATER_THAN_OR_EQUAL_TO(">="),
+        SMALLER_THAN_OR_EQUAL_TO("<=");
 
         private final String symbol;
 
@@ -61,20 +103,20 @@ public class NumericConditionalSegment extends ModifiableLangSegment {
                     return operator;
                 }
             }
-            return EQUAL;
+            return EQUAL_TO;
         }
 
         public boolean test(int value, int conditionalValue) {
             switch (this) {
-                case EQUAL:
+                case EQUAL_TO:
                     return value == conditionalValue;
-                case BIGGER:
+                case GREATER_THAN:
                     return value > conditionalValue;
-                case SMALLER:
+                case SMALLER_THAN:
                     return value < conditionalValue;
-                case BIGGER_EQUAL:
+                case GREATER_THAN_OR_EQUAL_TO:
                     return value >= conditionalValue;
-                case SMALLER_EQUAL:
+                case SMALLER_THAN_OR_EQUAL_TO:
                     return value <= conditionalValue;
                 default:
                     return false;
@@ -82,7 +124,8 @@ public class NumericConditionalSegment extends ModifiableLangSegment {
         }
     }
 
-    private Integer isNumeric(String string) {
+    @Nullable
+    private Integer isNumeric(@NotNull String string) {
         try {
             return Integer.parseInt(string);
         } catch (NumberFormatException ex) {
