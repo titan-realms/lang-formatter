@@ -24,7 +24,7 @@ import java.util.function.Consumer;
 public class LangParser {
 
     public static void main(String[] args) {
-        List<LangSegment> segments = LangParser.createSegments("{#00000}{!bold}get your {#ffffff}{@ice-cream-limit} {#00000}free ice cream{\"ice-cream-limit\">1(s)()} today");
+        List<LangSegment> segments = LangParser.createSegments("{#00000}{!bold}get your {#ffffff}{@ice-cream-limit} {#00000}free ice cream{\"ice-cream-limit\" > 1 ? \"s\" : \"\"}");
         TextComponent text = segmentsToText(segments, (placeholders) -> placeholders
                 .set("ice-cream-limit", 5)
         );

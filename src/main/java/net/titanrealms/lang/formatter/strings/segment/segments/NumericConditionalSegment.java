@@ -67,7 +67,7 @@ public class NumericConditionalSegment extends ModifiableLangSegment {
             this.conditionalValue = Integer.parseInt(beforeTernary.substring(2));
         }
         this.trueExtension = args[3];
-        this.falseExtension = args[5];
+        this.falseExtension = args.length <= 5 ? "" : args[5];
     }
 
     @Override
