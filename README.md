@@ -1,5 +1,11 @@
 # lang-formatter
 
+## Project Status
+
+This project is no longer maintained. We are now using MiniMessage as it is a more adopted system and widely used within Paper, Minestom and Velocity communities. You can check it out here https://docs.adventure.kyori.net/minimessage/
+
+***
+
 This is our API/library that parses our language spec from lang files into objects. These are then distributed across our servers to deliver dynamic messages to players on demand.
 
 This library is designed to render into Adventure Componenets.
